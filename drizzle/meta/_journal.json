@@ -15,6 +15,13 @@
       "when": 1793811911597,
       "tag": "0001_soft_tinkerer",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1793866010114,
+      "tag": "0002_strong_trauma",
+      "breakpoints": true
     }
   ]
 }
