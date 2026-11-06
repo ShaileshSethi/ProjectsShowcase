@@ -27,6 +27,7 @@ function House({i=0}:{i?:number}){return <div className={"house house-"+i%3} ari
 export default function Home(){
  const [view,setView]=useState("Explore"),[category,setCategory]=useState("Website"),[vibe,setVibe]=useState("Unhinged"),[idea,setIdea]=useState<Idea>(ideas[0]),[busy,setBusy]=useState(false),[toast,setToast]=useState(""),[filter,setFilter]=useState("All projects"),[projects,setProjects]=useState<Project[]>([]),[loadError,setLoadError]=useState(""),[loading,setLoading]=useState(false),[modal,setModal]=useState(false),[submitting,setSubmitting]=useState(false),[error,setError]=useState(""),[gallery,setGallery]=useState(false),[sound,setSound]=useState(false),[riddle,setRiddle]=useState(false),[answer,setAnswer]=useState(""),[solved,setSolved]=useState(false),[title,setTitle]=useState(ideas[0].title),[brief,setBrief]=useState(ideas[0].description),[steps,setSteps]=useState<boolean[]>([false,false,false,false]),[menu,setMenu]=useState(false),[extra,setExtra]=useState(""),[restored,setRestored]=useState(false);
  const [communityRevision,setCommunityRevision]=useState(0);
+ useEffect(()=>{if(new URLSearchParams(window.location.search).get("view")==="Showcase")setView("Showcase")},[]);
  const panel=useRef<HTMLDivElement>(null),audio=useRef<AudioContext|null>(null),toastTimer=useRef<ReturnType<typeof setTimeout>|null>(null);
  function notify(t:string){setToast(t);if(toastTimer.current)clearTimeout(toastTimer.current);toastTimer.current=setTimeout(()=>setToast(""),3200)}
  const curtain=useRef<HTMLDivElement>(null),navigating=useRef(false);

@@ -9,6 +9,9 @@ export const projects = sqliteTable('projects', {
  members: text('members').notNull().default(''),
  mascot: text('mascot').notNull().default('ghost'),
  screenshot: text('screenshot').notNull().default(''),
+ story: text('story').notNull().default(''),
+ technologies: text('technologies').notNull().default(''),
+ sourceUrl: text('source_url').notNull().default(''),
 });
 export const applause = sqliteTable('applause', {
  projectId:text('project_id').notNull().references(()=>projects.id),

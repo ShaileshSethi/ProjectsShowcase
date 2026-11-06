@@ -21,10 +21,12 @@ export async function POST(request:Request) {
   const body=(form?Object.fromEntries(form):await request.json()) as Record<string,unknown>;
   const fields=['title','author','description','category','url'];
   if(!body||fields.some(k=>typeof body[k]!=='string'||!(body[k] as string).trim()))return Response.json({error:'Please complete every required field.'},{status:400});
+  if(['members','mascot','story','technologies','sourceUrl'].some(k=>body[k]!==undefined&&typeof body[k]!=='string'))return Response.json({error:'Check the optional project fields.'},{status:400});
   const b=body as Record<string,string>;
-  if(b.title.length>80||b.author.length>60||b.description.length>500||b.url.length>2048||(b.members||'').length>240||!['Website','Game','Tool'].includes(b.category)||!['ghost','pumpkin','bat','robot'].includes(b.mascot||'ghost'))return Response.json({error:'Check the field lengths and project type.'},{status:400});
+  if(b.title.length>80||b.author.length>60||b.description.length>500||b.url.length>2048||(b.members||'').length>240||(b.story||'').length>1200||(b.technologies||'').length>160||(b.sourceUrl||'').length>2048||!['Website','Game','Tool'].includes(b.category)||!['ghost','pumpkin','bat','robot'].includes(b.mascot||'ghost'))return Response.json({error:'Check the field lengths and project type.'},{status:400});
   let url;try{url=new URL(b.url)}catch{return Response.json({error:'Enter a valid project URL.'},{status:400})}
   if(!['https:','http:'].includes(url.protocol)||url.username||url.password)return Response.json({error:'Use a public http or https link.'},{status:400});
+  let sourceUrl='';if((b.sourceUrl||'').trim()){try{const source=new URL(b.sourceUrl.trim());if(!['https:','http:'].includes(source.protocol)||source.username||source.password)throw new Error();sourceUrl=source.href}catch{return Response.json({error:'Use a public http or https source link.'},{status:400})}}
   const id=crypto.randomUUID();let screenshot='';const file=form?.get('screenshot');
   if(file instanceof File&&file.size){
    if(file.size>3*1024*1024)return Response.json({error:'Use a screenshot smaller than 3 MB.'},{status:400});
@@ -36,7 +38,7 @@ export async function POST(request:Request) {
    if(!env.BUCKET)throw new Error();storedKey='screenshots/'+id;
    await env.BUCKET.put(storedKey,bytes,{httpMetadata:{contentType:png?'image/png':jpeg?'image/jpeg':'image/webp'}});screenshot='/api/media/'+id;
   }
-  const project={id,title:b.title.trim(),author:b.author.trim(),description:b.description.trim(),category:b.category,url:url.href,createdAt:Date.now(),members:(b.members||'').trim(),mascot:b.mascot||'ghost',screenshot};
+  const project={id,title:b.title.trim(),author:b.author.trim(),description:b.description.trim(),category:b.category,url:url.href,createdAt:Date.now(),members:(b.members||'').trim(),mascot:b.mascot||'ghost',screenshot,story:(b.story||'').trim(),technologies:(b.technologies||'').trim(),sourceUrl};
   await getDb().insert(projects).values(project);
   return Response.json({project},{status:201});
  }catch{if(storedKey)await env.BUCKET?.delete(storedKey).catch(()=>{});return Response.json({error:'Your project could not be saved. Please try again.'},{status:503})}

@@ -22,6 +22,13 @@
       "when": 1793866010114,
       "tag": "0002_strong_trauma",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1793953229243,
+      "tag": "0003_typical_vargas",
+      "breakpoints": true
     }
   ]
 }
